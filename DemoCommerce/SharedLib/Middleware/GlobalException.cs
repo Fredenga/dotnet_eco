@@ -1,6 +1,4 @@
-﻿
-
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SharedLib.Logs;
 using System.Net;
@@ -9,14 +7,21 @@ namespace SharedLib.Middleware
 {
     public class GlobalException(RequestDelegate next)
     {
+        string message = "";
+        int statusCode = 0;
+        string title = "";
         public async Task InvokeAsync(HttpContext context)
         {
-            string message = "sorry, internal server error occured, kindly try again";
-            int statusCode = (int)HttpStatusCode.InternalServerError;
-            string title = "Error";
             try
             {
                 await next(context);
+                if(context.Response.StatusCode == StatusCodes.Status500InternalServerError)
+                {
+                    message = "sorry, internal server error occured, kindly try again";
+                    statusCode = (int)HttpStatusCode.InternalServerError;
+                    title = "Error";
+                    await ModifyHeader(context, title, message, statusCode);
+                }
                 // check if the exception is too many requests -> 429
                 if (context.Response.StatusCode == StatusCodes.Status429TooManyRequests)
                 {
