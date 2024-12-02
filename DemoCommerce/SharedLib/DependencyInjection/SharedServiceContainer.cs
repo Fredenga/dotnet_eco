@@ -15,27 +15,37 @@ namespace SharedLib.DependencyInjection
             IConfiguration config, 
             string fileName) where TContext: DbContext
         {
-            // add generic DBContext
-            services.AddDbContext<TContext>(options =>
-            options.UseSqlServer(config.GetConnectionString("CommerceConnection"),
-            sqlServerOptions => sqlServerOptions.EnableRetryOnFailure()));
+            
 
-            // configure serilog logging
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Information()
-                .WriteTo.Debug()
-                .WriteTo.Console()
-                .WriteTo.File(path: $"{fileName}-.text",
-                restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information,
-                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {message:lj}{NewLine}{Exception}",
-                rollingInterval: RollingInterval.Day)
-                .CreateLogger();
+            try
+            {
+                // add generic DBContext
+                services.AddDbContext<TContext>(options =>
+                options.UseSqlServer(config.GetConnectionString("CommerceConnection"),
+                sqlServerOptions => sqlServerOptions.EnableRetryOnFailure()));
 
-            // Add JWT authentication scheme
-            JWTAuthenticationScheme.AddJWTAuthenticationScheme(services, config);
+                // configure serilog logging
+                Log.Logger = new LoggerConfiguration()
+                    .MinimumLevel.Information()
+                    .WriteTo.Debug()
+                    .WriteTo.Console()
+                    .WriteTo.File(path: $"{fileName}-.text",
+                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information,
+                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {message:lj}{NewLine}{Exception}",
+                    rollingInterval: RollingInterval.Day)
+                    .CreateLogger();
+
+                // Add JWT authentication scheme
+                JWTAuthenticationScheme.AddJWTAuthenticationScheme(services, config);
+                return services;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.ToString());
+            }
 
             
-            return services;
         }
 
         public static IApplicationBuilder useSharedPolicies(this IApplicationBuilder app)
