@@ -8,6 +8,6 @@ namespace AuthApi.Application.Interfaces
         Task<Response> Register(AppUserDTO appUserDTO);
         Task<Response> Login(LoginDTO loginDTO);
 
-        Task<AppUserDTO> GetUser(int userID);
+        Task<GetUserDTO> GetUser(int userID);
     }
 }

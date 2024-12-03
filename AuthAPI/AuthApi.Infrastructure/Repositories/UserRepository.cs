@@ -12,17 +12,17 @@ using System.Text;
 
 namespace AuthApi.Infrastructure.Repositories
 {
-    public class UserRepository(AuthDbContext context, IUser userInterface, IConfiguration config) : IUser
+    public class UserRepository(AuthDbContext context, IConfiguration config) : IUser
     {
         private async Task<AppUser> GetUserByEmail(string email)
         {
             var user = await context.Users.FirstOrDefaultAsync(x => x.Email == email);
             return user is not null ? user : null!;
         }
-        public async Task<AppUserDTO> GetUser(int userID)
+        public async Task<GetUserDTO> GetUser(int userID)
         {
             var user = await context.Users.FindAsync(userID);
-            return user is not null ? new AppUserDTO(
+            return user is not null ? new GetUserDTO(
                 user.ID,
                 user.Name!,
                 user.Telephone!,
@@ -35,7 +35,7 @@ namespace AuthApi.Infrastructure.Repositories
         public async Task<Response> Login(LoginDTO loginDTO)
         {
             var user = await GetUserByEmail(loginDTO.email);
-            if (user != null) {
+            if (user is null) {
                 return new Response(false, "invalid email provided");
             }
             //verify password
@@ -75,11 +75,14 @@ namespace AuthApi.Infrastructure.Repositories
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+
+
         public async Task<Response> Register(AppUserDTO appUserDTO)
         {
             var user = await GetUserByEmail(appUserDTO.Email);
-            if (user is not null) {
-                return new Response(false, "this email already exists"); 
+            if (user is not null)
+            {
+                return new Response(false, "this email already exists");
             }
             var appUser = new AppUser()
             {

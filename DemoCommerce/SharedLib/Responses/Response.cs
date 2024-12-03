@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace SharedLib.Responses
 {
-    public record Response(bool Flag=false, string Message=null);
+    public record Response(bool Flag=false, string Message=null!);
    
 }
