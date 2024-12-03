@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\DemoCommerce\SharedLib\SharedLib.csproj" />
+    <ProjectReference Include="..\AuthApi.Domain\AuthApi.Domain.csproj" />
   </ItemGroup>
 
 </Project>
