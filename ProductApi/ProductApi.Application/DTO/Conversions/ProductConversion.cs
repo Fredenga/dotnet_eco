@@ -1,4 +1,5 @@
-﻿using ProductApi.Domain.Entities;
+﻿using ProductApi.Application.Interfaces;
+using ProductApi.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,18 +18,25 @@ namespace ProductApi.Application.DTO.Conversions
             Price = productDTO.Price
         };
 
-        public static IEnumerable<ProductDTO>? FromEntity(Product product, IEnumerable<Product> products)
-
+        public static (ProductDTO?, IEnumerable<ProductDTO>?) FromEntity(Product product, IEnumerable<Product> products)
         {
-            if (product is not null || products is null)
+            // Case 1: If product is null or products is not empty, return products as a collection of ProductDTOs
+            if (products != null && !products.Any())
             {
-                var _products = products.Select(p =>
-                
-                    new ProductDTO(p.Id, p.Name, p.Quantity, p.Price)
-                ).ToList();
-                return  _products;
+                var productDTOs = products.Select(p => new ProductDTO(p.Id, p.Name!, p.Quantity, p.Price));
+                return (null, productDTOs);
             }
-            return null;
+
+            // Case 2: If product is not null, return a single ProductDTO and null for the product list
+            if (product != null)
+            {
+                var productDTO = new ProductDTO(product.Id, product.Name!, product.Quantity, product.Price);
+                return (productDTO, null);
+            }
+
+            // Case 3: If both product and products are null, return (null, null)
+            return (null, null);
         }
+
     }
 }
