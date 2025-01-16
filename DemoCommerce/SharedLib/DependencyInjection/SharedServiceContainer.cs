@@ -15,8 +15,6 @@ namespace SharedLib.DependencyInjection
             IConfiguration config, 
             string fileName) where TContext: DbContext
         {
-            
-
             try
             {
                 // add generic DBContext
@@ -53,8 +51,12 @@ namespace SharedLib.DependencyInjection
             //use global exception
             app.UseMiddleware<GlobalException>();
 
+            app.UseAuthentication();
+
+            app.UseAuthorization();
+
             //register middleware to block all outside API calls
-            //app.UseMiddleware<ListenToOnlyApiGateway>();
+            app.UseMiddleware<ListenToOnlyApiGateway>();
 
             return app;
         }

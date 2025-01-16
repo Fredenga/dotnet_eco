@@ -23,6 +23,8 @@ if (app.Environment.IsDevelopment())
 app.UseInfrastructurePolicy();
 app.UseHttpsRedirection();
 
+//app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();

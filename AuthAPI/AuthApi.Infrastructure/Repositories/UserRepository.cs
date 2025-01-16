@@ -50,28 +50,34 @@ namespace AuthApi.Infrastructure.Repositories
 
         private string GenerateToken(AppUser user)
         {
+            // Retrieve the key from configuration
             var key = Encoding.UTF8.GetBytes(config.GetSection("Authentication:Key").Value!);
             var securityKey = new SymmetricSecurityKey(key);
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            // Prepare claims
             var claims = new List<Claim>
+    {
+        new(ClaimTypes.Name, user.Name!),
+        new(ClaimTypes.Email, user.Email!),
+    };
+
+            // Add role claim only if it's not null or empty
+            if (!string.IsNullOrEmpty(user.Role))
             {
-                new (ClaimTypes.Name, user.Name!),
-                new (ClaimTypes.Email, user.Email!),
-                new (ClaimTypes.Role, user.Role!),
-            };
-            if(!string.IsNullOrEmpty(user.Role) || !Equals("string", user.Role))
-            {
-                claims.Add(new(ClaimTypes.Role, user.Role!));
+                claims.Add(new Claim(ClaimTypes.Role, user.Role!));
             }
 
+            // Create the JWT token with an expiration time (e.g., 1 hour)
             var token = new JwtSecurityToken(
                 issuer: config["Authentication:Issuer"],
                 audience: config["Authentication:Audience"],
                 claims: claims,
-                expires: null,
+                expires: DateTime.Now.AddHours(1),  // Set expiration to 1 hour
                 signingCredentials: credentials
             );
 
+            // Return the token as a string
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 

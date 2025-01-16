@@ -1,5 +1,6 @@
 ﻿using AuthApi.Application.DTOs;
 using AuthApi.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SharedLib.Responses;
 
@@ -7,6 +8,7 @@ namespace AuthApi.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class AuthController(IUser userInterface) : ControllerBase
     {
         [HttpPost("login")]
@@ -21,6 +23,7 @@ namespace AuthApi.Presentation.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [Authorize]
         public async Task<ActionResult<GetUserDTO>> GetUser(int id)
         {
             if(id <= 0)

@@ -1,7 +1,6 @@
 {
   "Routes": [
     {
-      // JWT Authentication
       "DownstreamPathTemplate": "/api/auth/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -9,10 +8,7 @@
           "Host": "localhost",
           "Port": 5000
         }
-      ]
-    },
-    {
-      // JWT Authentication
+      ],
       "UpstreamPathTemplate": "/api/auth/{everything}",
       "UpstreamHttpMethod": [
         "GET",
@@ -26,8 +22,6 @@
         "PeriodTimespan": 10
       }
     },
-    // Product API
-    // GET Method
     {
       "DownstreamPathTemplate": "/api/products",
       "DownstreamScheme": "http",
@@ -47,7 +41,6 @@
         "Header": "E-Commerce-Caching-Control"
       }
     },
-    // Get Product By Id
     {
       "DownstreamPathTemplate": "/api/products/{id}",
       "DownstreamScheme": "http",
@@ -57,7 +50,6 @@
           "Port": 5001
         }
       ],
-
       "UpstreamPathTemplate": "/api/products/{id}",
       "UpstreamHttpMethod": [
         "GET"
@@ -68,7 +60,6 @@
         "Header": "E-Commerce-Caching-Control"
       }
     },
-    // POST, PUT, DELETE
     {
       "DownstreamPathTemplate": "/api/products/{everything}",
       "DownstreamScheme": "http",
@@ -88,13 +79,9 @@
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
       }
-
     },
-
-    // Order API
-    // GET Method
     {
-      "DownstreamPathTemplate": "/api/orders",
+      "DownstreamPathTemplate": "/api/orders/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -102,7 +89,7 @@
           "Port": 5002
         }
       ],
-      "UpstreamPathTemplate": "/api/orders",
+      "UpstreamPathTemplate": "/api/orders/{everything}",
       "UpstreamHttpMethod": [
         "GET"
       ],
@@ -116,7 +103,6 @@
         "AllowedScopes": []
       }
     },
-    // Get Order By Id
     {
       "DownstreamPathTemplate": "/api/orders/{id}",
       "DownstreamScheme": "http",
@@ -126,8 +112,7 @@
           "Port": 5002
         }
       ],
-
-      "UpstreamPathTemplate": "/api/products/{id}",
+      "UpstreamPathTemplate": "/api/orders/{id}",
       "UpstreamHttpMethod": [
         "GET"
       ],
@@ -141,7 +126,6 @@
         "AllowedScopes": []
       }
     },
-    // POST, PUT, DELETE
     {
       "DownstreamPathTemplate": "/api/orders/{everything}",
       "DownstreamScheme": "http",
@@ -161,13 +145,12 @@
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
       }
-
     }
   ],
   "GlobalConfiguration": {
     "BaseUrl": "https://localhost:5003",
     "RateLimitOptions": {
-      "QuotaExceededMessage":  "There are too many requests, you should relax more"
+      "QuotaExceededMessage": "There are too many requests, you should relax more"
     }
   }
 }

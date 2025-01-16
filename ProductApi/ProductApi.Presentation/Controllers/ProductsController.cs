@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProductApi.Application.DTO;
 using ProductApi.Application.DTO.Conversions;
@@ -11,10 +12,11 @@ namespace ProductApi.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class ProductsController(IProduct productInterface) : ControllerBase
     {
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
             //get all products from repo
             var products = await productInterface.GetAllAsync();
@@ -23,8 +25,9 @@ namespace ProductApi.Presentation.Controllers
                 return NotFound("No products detected in the database");
             }
             //convert data from entity to DTO and return it
-            var (_, list) = ProductConversion.FromEntity(null!, products);
-            return list!.Any() ? Ok(list) : NotFound("No product found");
+            return Ok(products);
+            //var (_, list) = ProductConversion.FromEntity(null!, products);
+            //return list!.Any() ? Ok(list) : NotFound("No product found");
         }
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
@@ -41,6 +44,7 @@ namespace ProductApi.Presentation.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Response>> CreateProduct(ProductDTO product)
         {
             //check model state if all data annotations are passed
@@ -55,6 +59,7 @@ namespace ProductApi.Presentation.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Response>> UpdateProduct(ProductDTO product)
         {
             //check model state if all data annotations are passed
@@ -69,6 +74,7 @@ namespace ProductApi.Presentation.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Response>> DeleteProduct(ProductDTO product)
         {
             //convert to entity

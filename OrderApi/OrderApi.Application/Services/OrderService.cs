@@ -32,7 +32,7 @@ namespace OrderApi.Application.Services
         // GET USER
         public async Task<AppUserDTO> GetUser(int userID)
         {
-            var getUser = await httpClient.GetAsync($"/api/users/{userID}");
+            var getUser = await httpClient.GetAsync($"api/auth/{userID}");
             if (!getUser.IsSuccessStatusCode)
             {
                 return null!;
